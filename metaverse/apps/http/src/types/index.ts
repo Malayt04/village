@@ -15,6 +15,12 @@ export const metaDataSchema = z.object({
     avatarId: z.string(),
 })
 
+export const spaceSchema = z.object({
+    name: z.string(),
+    height: z.number(),
+    width: z.number()
+})
+
 declare global {
     namespace Express {
       export interface Request {

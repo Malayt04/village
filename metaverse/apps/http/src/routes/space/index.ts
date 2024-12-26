@@ -1,5 +1,5 @@
 import express from 'express'
-import { spaceSchema } from '../../types'
+import { elementSchema, spaceSchema } from '../../types'
 import client from '@repo/db/client'
 import { userMiddleware } from '../../middleware/user'
 
@@ -69,3 +69,68 @@ spaceRouter.get("/all", userMiddleware, async (req, res) => {
     
 })
 
+spaceRouter.get("/:spaceId",async (req, res) => {
+    const space = await client.space.findUnique({
+        where: {
+            id: req.params.spaceId
+        },
+        include: {
+            elements: {
+                include: {
+                    element: true
+                }
+            },
+        }
+    })
+
+    if (!space) {
+        res.status(400).json({message: "Space not found"})
+        return
+    }
+
+    res.json({
+        "dimensions": `${space.width}x${space.height}`,
+        elements: space.elements.map(e => ({
+            id: e.id,
+            element: {
+                id: e.element.id,
+                imageUrl: e.element.imageUrl,
+                width: e.element.width,
+                height: e.element.height,
+                static: e.element.static
+            },
+            x: e.x,
+            y: e.y
+        })),
+    })
+})
+
+spaceRouter.post('/element', async(req, res)=>{
+
+    const parsedData = elementSchema.safeParse(req.body)
+
+    try {
+        if(!parsedData.success){
+            return res.json({"message":"Please enter details correctly"})
+        }
+
+        const {elementId, spaceId, x, y} = parsedData
+
+        const element = await client.element.findOne({
+            where:{
+                id: elementId
+            }
+        })
+
+        await client.Space.save({
+            where:{
+                id: spaceId
+            },
+
+            
+        })
+
+    } catch (error) {
+        
+    }
+})

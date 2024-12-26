@@ -21,6 +21,13 @@ export const spaceSchema = z.object({
     width: z.number()
 })
 
+export const elementSchema = z.object({
+    elementId: z.string(),
+    spaceId: z.string(),
+    x: z.number(),
+    y: z.number()
+})
+
 declare global {
     namespace Express {
       export interface Request {

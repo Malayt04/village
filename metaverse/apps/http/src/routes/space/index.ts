@@ -1,5 +1,5 @@
 import express from 'express'
-import { elementSchema, spaceSchema } from '../../types'
+import { spaceElementSchema, spaceSchema } from '../../types'
 import client from '@repo/db/client'
 import { userMiddleware } from '../../middleware/user'
 
@@ -107,7 +107,7 @@ spaceRouter.get("/:spaceId",async (req, res) => {
 
 spaceRouter.post('/element', async(req, res)=>{
 
-    const parsedData = elementSchema.safeParse(req.body)
+    const parsedData = spaceElementSchema.safeParse(req.body)
 
     try {
         if(!parsedData.success){

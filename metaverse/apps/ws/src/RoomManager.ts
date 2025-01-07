@@ -1,28 +1,44 @@
-function getRandomString(length: number) {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let result = "";
-    for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
-}
+import type { User } from "./User";
+import { OutgoingMessage } from "./types";
 
+export class RoomManager {
+    rooms: Map<string, User[]> = new Map();
+    static instance: RoomManager;
 
-export class User {
-    public id: string;
-    public userId?: string;
-    private spaceId?: string;
-    private x: number;
-    private y: number;
-    private ws: WebSocket;
-
-
-    constructor(ws: WebSocket) {
-        this.id = getRandomString(10);
-        this.x = 0;
-        this.y = 0;
-        this.ws = ws;
-        this.initHandlers()
+    private constructor() {
+        this.rooms = new Map();
     }
 
+    static getInstance() {
+        if (!this.instance) {
+            this.instance = new RoomManager();
+        }
+        return this.instance;
+    }
+
+    public removeUser(user: User, spaceId: string) {
+        if (!this.rooms.has(spaceId)) {
+            return;
+        }
+        this.rooms.set(spaceId, (this.rooms.get(spaceId)?.filter((u) => u.id !== user.id) ?? []));
+    }
+
+    public addUser(spaceId: string, user: User) {
+        if (!this.rooms.has(spaceId)) {
+            this.rooms.set(spaceId, [user]);
+            return;
+        }
+        this.rooms.set(spaceId, [...(this.rooms.get(spaceId) ?? []), user]);
+    }
+
+    public broadcast(message: OutgoingMessage, user: User, roomId: string) {
+        if (!this.rooms.has(roomId)) {
+            return;
+        }
+        this.rooms.get(roomId)?.forEach((u) => {
+            if (u.id !== user.id) {
+                u.send(message);
+            }
+        });
+    }
 }

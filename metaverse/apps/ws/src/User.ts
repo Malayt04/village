@@ -1,11 +1,10 @@
 import { WebSocket } from "ws";
 import { RoomManager } from "./RoomManager";
-import dotenv from 'dotenv'
 import { OutgoingMessage } from "./types";
-import client from "@repo/db";
+import client from "@repo/db/client";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { JWT_SECRET } from "./config";
 
-const JWT_SECRET = process.env.JWT_SECRET as string
 function getRandomString(length: number) {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let result = "";

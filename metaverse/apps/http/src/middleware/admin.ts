@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../config";
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const jwtSecret =JWT_SECRET;
 
-if (!JWT_SECRET) {
-    throw new Error("JWT_SECRET is not defined in the environment variables");
+if (!jwtSecret) {
+    throw new Error("jwtSecret is not defined in the environment variables");
 }
 
 interface DecodedToken {
@@ -23,7 +24,7 @@ export const adminMiddleware = async (req: Request, res: Response, next: NextFun
     }
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+        const decoded = jwt.verify(token, jwtSecret) as DecodedToken;
 
         if (decoded.role !== "Admin") {
             res.status(403).json({message: "Unauthorized"})

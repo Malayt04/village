@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { metaDataSchema, signInSchema, signUpSchema } from '../../types';
 import { userMiddleware } from '../../middleware/user';
+import { JWT_SECRET } from '../../config';
 
 
 dotenv.config();
@@ -59,7 +60,7 @@ userRouter.post('/signin', async (req: Request, res: Response) => {
             return res.json({ "message": "Invalid Password" });
         }
 
-        const jwtSecret = process.env.JWT_SECRET;
+        const jwtSecret = JWT_SECRET;
         if (!jwtSecret) {
             return res.status(500).json({ "message": "Internal server error: JWT secret is not defined" });
         }

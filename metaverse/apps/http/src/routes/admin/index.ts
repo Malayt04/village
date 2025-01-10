@@ -3,11 +3,10 @@ import client from '@repo/db/client'
 import { CreateAvatarSchema, createElementSchema, CreateMapSchema, UpdateElementSchema } from '../../types'
 import { adminMiddleware } from '../../middleware/admin'
 
-const adminRouter = express.Router()
+export const adminRouter = express.Router()
 
-adminRouter.use(adminMiddleware)
 
-adminRouter.post('/element', async(req, res)=>{
+adminRouter.post('/element', adminMiddleware, async(req, res)=>{
     const parsedData = createElementSchema.safeParse(req.body)
 
     try {
@@ -34,7 +33,7 @@ adminRouter.post('/element', async(req, res)=>{
 })
 
 
-adminRouter.put("/element/:elementId", (req, res) => {
+adminRouter.put("/element/:elementId", adminMiddleware, (req, res) => {
     const parsedData = UpdateElementSchema.safeParse(req.body)
     if (!parsedData.success) {
         res.status(400).json({message: "Validation failed"})
@@ -51,22 +50,39 @@ adminRouter.put("/element/:elementId", (req, res) => {
     res.json({message: "Element updated"})
 })
 
-adminRouter.post("/avatar", async (req, res) => {
-    const parsedData = CreateAvatarSchema.safeParse(req.body)
-    if (!parsedData.success) {
-        res.status(400).json({message: "Validation failed"})
-        return
-    }
-    const avatar = await client.avatar.create({
-        data: {
-            name: parsedData.data.name,
-            imageUrl: parsedData.data.imageUrl
-        }
-    })
-    res.json({avatarId: avatar.id})
+adminRouter.post("/avatar",adminMiddleware, async (req, res, next) => {
+   try {
+
+    console.log("admin avatar route")
+    
+     const parsedData = CreateAvatarSchema.safeParse(req.body)
+ 
+     console.log(parsedData)
+ 
+     if (!parsedData.success) {
+         res.status(400).json({message: "Validation failed"})
+         return
+     }
+ 
+     const {name, imageUrl} = parsedData.data
+ 
+     const avatar = await client.avatar.create({
+         data: {
+             name,
+             imageUrl
+         }
+     })
+ 
+     console.log(avatar.id)
+     res.json({avatarId: avatar.id})
+   } catch (error) {
+         console.log(error)
+         res.status(500).json({message: "Internal server error"})
+         next(error)
+   }
 })
 
-adminRouter.post("/map", async (req, res) => {
+adminRouter.post("/map", adminMiddleware,async (req, res) => {
     const parsedData = CreateMapSchema.safeParse(req.body)
     if (!parsedData.success) {
         res.status(400).json({message: "Validation failed"})

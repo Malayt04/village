@@ -4,6 +4,7 @@
   "type": "module",
   "private": true,
   "exports": {
+    ".": "./src/index.ts",
     "./button": "./src/button.tsx",
     "./card": "./src/card.tsx",
     "./code": "./src/code.tsx"
@@ -23,7 +24,11 @@
     "typescript": "5.5.4"
   },
   "dependencies": {
+    "@tabler/icons-react": "^3.28.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.17.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0"
   }
 }

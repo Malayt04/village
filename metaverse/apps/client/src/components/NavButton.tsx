@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from 'react-router-dom'
 import { cn } from '../lib/utils'
 
@@ -25,7 +26,7 @@ export default function NavButton({
   )
 
   return (
-    <Link to={to} className={styles} {...props}>
+    <Link to={to} className={styles}>
       {children}
     </Link>
   )

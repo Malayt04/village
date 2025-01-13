@@ -6,9 +6,9 @@ import React from 'react'
 interface DashboardNavProps {
   userName: string
   userAvatar: string
+  onCreateSpace: () => void
 }
-
-export default function DashboardNav({ userName, userAvatar }: DashboardNavProps) {
+export default function DashboardNav({ userName, userAvatar, onCreateSpace }: DashboardNavProps) {
   return (
     <nav className="bg-indigo-950 text-white">
       <div className="max-w-7xl mx-auto">
@@ -50,7 +50,11 @@ export default function DashboardNav({ userName, userAvatar }: DashboardNavProps
               <Globe className="h-5 w-5" />
             </button>
 
-            <CTAButton variant="primary" className="flex items-center space-x-2">
+            <CTAButton 
+              variant="primary" 
+              className="flex items-center space-x-2"
+              onClick={onCreateSpace}
+            >
               <Plus className="h-4 w-4" />
               <span>Create Space</span>
             </CTAButton>
